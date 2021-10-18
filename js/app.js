@@ -5,6 +5,12 @@ let contenedor = [];
 eventListeners()
 function eventListeners(){
     formulario.addEventListener('submit', agregarIdeas);
+
+    document.addEventListener('DOMContentLoaded', () => {
+        contenedor = JSON.parse(localStorage.getItem('contenedor')) || []
+
+        crearHtml()
+    })
 }
 
 function agregarIdeas(e){
@@ -49,13 +55,25 @@ function crearHtml(){
     limpiar()
 
     if(contenedor.length > 0){
+
+    
         contenedor.forEach(idea => {
 
+            const btnEliminar = document.createElement('a')
+            btnEliminar.classList.add('borrar-ideas')
+            btnEliminar.textContent = 'X'
+    
             const li = document.createElement('li')
 
             li.innerText =  idea.idea
 
+            li.appendChild(btnEliminar)
+
             listaIdeas.appendChild(li)
+
+            btnEliminar.onclick = () => {
+                borrarIdea(idea.id)
+            }
         })
     }
 
@@ -63,11 +81,16 @@ function crearHtml(){
 }
 
 function sincronizarStorage(){
-    
+    localStorage.setItem('contenedor', JSON.stringify(contenedor))
 }
 
 function limpiar(){
     while(listaIdeas.firstChild){
         listaIdeas.removeChild(listaIdeas.firstChild)
     }
+}
+
+function borrarIdea(id){
+    contenedor = contenedor.filter(idea => idea.id !== id)
+    crearHtml()
 }
